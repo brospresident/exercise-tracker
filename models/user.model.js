@@ -3,9 +3,12 @@ const { addNewLog } = require('./log.model')
 const users = [];
 
 function addNewUser(user) {
-    user._id = users.length;
-    users.push(user);
-    return user;
+    const newUser = {
+        _id: users.length.toString(),
+        username: user.username
+    }
+    users.push(newUser);
+    return newUser;
 }
 
 function getAllUsers() {
@@ -13,8 +16,9 @@ function getAllUsers() {
 }
 
 function addExercise(id, fields) {
-    users[id].date = fields.date;
-    users[id].duration = fields.duration;
+    id = Number(id);
+    users[id].date = new Date(fields.date).toDateString();
+    users[id].duration = +fields.duration;
     users[id].description = fields.description
     const log = {
         description: fields.description,

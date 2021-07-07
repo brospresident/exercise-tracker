@@ -12,7 +12,7 @@ function httpPostUserData(req, res) {
 
 function httpGetAllUsers(req, res) {
     const users = getAllUsers();
-    return res.status(200).json(users)
+    return res.status(200).json(users);
 }
 
 module.exports = {
