@@ -15,7 +15,7 @@ function httpPostExercise(req, res) {
 
 function httpGetAllUsersExercises(req, res) {
     let logs = undefined;
-    if (req.query.from === undefined || req.query.to === undefined || req.query.limit === undefined) {
+    if (Object.keys(req.query).length === 0) {
         logs = false;
     }
     else logs = req.query;
@@ -33,22 +33,36 @@ function httpGetAllUsersExercises(req, res) {
         return res.status(200).json(show);
     }
     else {
-        const limit = +logs.limit;
-        let from = new Date(logs.from).getTime();
-        let to = new Date(logs.to).getTime();
+        let from = new Date(0).getTime();
+        let to = new Date().getTime();
+
+        if (logs.from) {
+            from = new Date(logs.from).getTime();
+        }
+
+        if (logs.to) {
+            to = new Date(logs.to).getTime();
+        }
 
         const userLogs = getUserLog(userId);
 
-        const showLogs = userLogs.filter((elem) => {
+        let showLogs = userLogs.filter((elem) => {
             let elemDate = new Date(elem.date).getTime();
             return elemDate >= from && elemDate <= to;
         });
 
-        if (limit) {
-            showLogs = showLogs.slice(0, limit);
+        if (req.query.limit) {
+            showLogs = showLogs.slice(0, req.query.limit);
         }
 
-        return res.status(200).json(showLogs); 
+        const sendObj = {
+            _id: userId,
+            username: user.username,
+            count: showLogs.length,
+            log: showLogs 
+        }
+
+        return res.status(200).json(sendObj); 
     }
 }
 
