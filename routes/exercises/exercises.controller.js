@@ -34,21 +34,20 @@ function httpGetAllUsersExercises(req, res) {
     }
     else {
         const limit = +logs.limit;
-        const from = Date.parse(logs.from);
-        const to = Date.parse(logs.to);
-
-        const showLogs = [];
+        let from = new Date(logs.from).getTime();
+        let to = new Date(logs.to).getTime();
 
         const userLogs = getUserLog(userId);
-        let count = 0;
-        for (let log of userLogs) {
-            const logDate = Date.parse(log.date);
 
-            if (!dates.inRange(logDate, from, to) && count < limit) {
-                showLogs.push(log);
-                count++;
-            }
+        const showLogs = userLogs.filter((elem) => {
+            let elemDate = new Date(elem.date).getTime();
+            return elemDate >= from && elemDate <= to;
+        });
+
+        if (limit) {
+            showLogs = showLogs.slice(0, limit);
         }
+
         return res.status(200).json(showLogs); 
     }
 }
